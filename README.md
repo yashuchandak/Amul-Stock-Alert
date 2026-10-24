@@ -25,7 +25,7 @@ Set up Telegram alerts:
 2. Open your new bot and send it `/start`.
 3. On the VPS, run `./get_telegram_chat_id.sh`. Copy your private chat ID from its output into `TELEGRAM_CHAT_ID` in `.env`.
 
-Keep the bot token private. The pincode and both product URLs are already filled in; edit them if needed. Existing `.env` files using `AMUL_PRODUCT_URL` continue to set the 60 sachet product. You can instead set `AMUL_PRODUCT_URL_60` and `AMUL_PRODUCT_URL_30` independently.
+Keep the bot token private. Set `AMUL_PRODUCT_URL_60` and `AMUL_PRODUCT_URL_30` in `.env` to configure the two product pages. If you previously used `AMUL_PRODUCT_URL`, rename it to `AMUL_PRODUCT_URL_60`.
 
 Run one manual check:
 

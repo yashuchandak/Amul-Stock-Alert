@@ -143,10 +143,8 @@ def check_site(pincode: str, product_url: str) -> tuple[bool, str, str]:
 def main() -> int:
     pincode = required("AMUL_PINCODE", "560103")
     product_urls = {
-        "60": os.getenv("AMUL_PRODUCT_URL_60", os.getenv(
-            "AMUL_PRODUCT_URL",
-            "https://shop.amul.com/product/amul-chocolate-whey-protein-34-g-or-pack-of-60-sachets",
-        )).strip(),
+        "60": os.getenv("AMUL_PRODUCT_URL_60",
+            "https://shop.amul.com/product/amul-chocolate-whey-protein-34-g-or-pack-of-60-sachets").strip(),
         "30": os.getenv("AMUL_PRODUCT_URL_30",
             "https://shop.amul.com/product/amul-chocolate-whey-protein-34-g-or-pack-of-30-sachets").strip(),
     }
