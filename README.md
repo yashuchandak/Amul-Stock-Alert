@@ -19,13 +19,13 @@ nano .env
 chmod 600 .env
 ```
 
-Set up Telegram alerts:
+Set up Telegram alerts for yourself and friends:
 
 1. In Telegram, message `@BotFather`, send `/newbot`, and follow its steps. Copy the bot token into `TELEGRAM_BOT_TOKEN` in `.env`.
-2. Open your new bot and send it `/start`.
-3. On the VPS, run `./get_telegram_chat_id.sh`. Copy your private chat ID from its output into `TELEGRAM_CHAT_ID` in `.env`.
+2. You and each friend open the bot privately and send `/start` once. Telegram bots cannot start a private conversation with someone who has not started the bot.
+3. `run_check.sh` now polls for new `/start` and `/stop` messages before every stock check. Friends are added automatically; no chat-ID copying is needed. `/stop` opts a person out, even if their ID is also in the explicit recipient variables.
 
-Keep the bot token private. Set `AMUL_PRODUCT_URL_60` and `AMUL_PRODUCT_URL_30` in `.env` to configure the two product pages. If you previously used `AMUL_PRODUCT_URL`, rename it to `AMUL_PRODUCT_URL_60`.
+Keep the bot token private. Your existing `TELEGRAM_CHAT_ID` continues to work; `TELEGRAM_CHAT_IDS` can also provide a comma-separated list of fixed recipients. New `/start` subscribers receive the current stock status on the next run, then receive future status-change alerts. Failed deliveries are retried for the affected recipient without repeating alerts to people who already received them. Run `./get_telegram_chat_id.sh` only when you want to list the current recipients. Set `AMUL_PRODUCT_URL_60` and `AMUL_PRODUCT_URL_30` in `.env` to configure the two product pages. If you previously used `AMUL_PRODUCT_URL`, rename it to `AMUL_PRODUCT_URL_60`.
 
 Run one manual check:
 
