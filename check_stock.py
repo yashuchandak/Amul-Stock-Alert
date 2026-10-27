@@ -175,23 +175,27 @@ def check_site(pincode: str, product_url: str) -> tuple[bool, str, str]:
                     f"Current page: {page.url!r}; title: {page.title()!r}; "
                     f"visible text: {excerpt!r}.{image_note}"
                 ) from exc
+            # Amul's Add to Cart anchor is the stock signal. Its disabled
+            # attribute is "0" when available and "true" when unavailable.
+            add_to_cart = detail.locator(
+                "a", has_text=re.compile(r"^\s*Add to Cart\s*$", re.I)
+            )
             try:
-                sold_out = detail.locator(".alert.alert-danger", has_text=re.compile("sold out|out of stock", re.I))
-                sold_out.wait_for(state="visible", timeout=4000)
-                return False, title_locator.inner_text().strip(), page.url
-            except PlaywrightTimeoutError:
-                pass
-
-            # On the live product page, Amul renders Add to Cart as an anchor
-            # with disabled="true" and a `disabled` class when unavailable.
-            add_to_cart = detail.locator("a.add-to-cart")
-            add_to_cart.wait_for(state="attached", timeout=10000)
+                add_to_cart.wait_for(state="visible", timeout=10000)
+            except PlaywrightTimeoutError as exc:
+                raise RuntimeError(
+                    "Product page loaded without a visible Add to Cart control."
+                ) from exc
             disabled_attr = add_to_cart.get_attribute("disabled")
+            disabled_value = (disabled_attr or "").strip().lower()
+            aria_disabled = (add_to_cart.get_attribute("aria-disabled") or "").strip().lower()
             classes = add_to_cart.get_attribute("class") or ""
-            button_text = add_to_cart.inner_text().strip().lower()
-            if disabled_attr is None and "disabled" not in classes.split() and "add to cart" in button_text:
-                return True, title_locator.inner_text().strip(), page.url
-            raise RuntimeError("Could not determine stock state from the product page")
+            is_disabled = (
+                (disabled_attr is not None and disabled_value not in {"0", "false", "no"})
+                or aria_disabled == "true"
+                or "disabled" in classes.split()
+            )
+            return not is_disabled, title_locator.inner_text().strip(), page.url
         finally:
             browser.close()
 
